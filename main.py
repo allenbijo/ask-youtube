@@ -2,6 +2,7 @@ from youtube_transcript_api import YouTubeTranscriptApi
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
+import streamlit as st
 
 load_dotenv()
 
@@ -14,6 +15,7 @@ def get_transcript(video_url):
 		s += (f"{line['text']} ")
 	return s
 
+
 def ask_llm(transcript, question):
 	question_to_ask = "This is the transcript of a youtube video. " + transcript + " \n\nNow, I have a question for you answer in plain text only: " + question
 	# Gemini model
@@ -24,11 +26,14 @@ def ask_llm(transcript, question):
 	return llm_response
 
 
-
-# Example usage
-video_url = "https://www.youtube.com/watch?v=PJXtXN-PW60"
-transcript = get_transcript(video_url)
-
-question = "What is the verdict of this video?"
-answer = ask_llm(transcript, question)
-print(answer.text)
+if __name__ == "__main__":
+	st.title("Ask a question about a youtube video")
+	if video_url := st.text_input("Enter the youtube video URL"):
+		transcript = get_transcript(video_url)
+		_, c, _ = st.columns(3)
+		with c:
+			st.markdown(f'![Alt text](https://i.ytimg.com/vi/{video_url.split("=")[-1]}/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAkpTh1x8TlNksn9I4nYpFnTAzkiA "a title")')
+		if question := st.text_input("Enter your question"):
+			answer = ask_llm(transcript, question)
+			st.balloons()
+			st.write(answer.text)
