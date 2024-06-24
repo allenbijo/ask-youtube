@@ -8,7 +8,7 @@ load_dotenv()
 
 
 def get_transcript(video_url):
-	video_id = video_url.split("=")[-1]
+	video_id = video_url.split("=")[1]
 	transcript = YouTubeTranscriptApi.get_transcript(video_id)
 	s = ""
 	for line in transcript:
@@ -17,7 +17,7 @@ def get_transcript(video_url):
 
 
 def ask_llm(transcript, question, key):
-	question_to_ask = "This is the transcript of a youtube video. " + transcript + " \n\nNow, I have a question for you answer in plain text only: " + question
+	question_to_ask = "This is the transcript of a youtube video. " + transcript + " \n\nNow, I have a question for you answer in unformatted text only: " + question
 	# Gemini model
 	genai.configure(api_key=key)
 	# Choose a model that's appropriate for your use case.
